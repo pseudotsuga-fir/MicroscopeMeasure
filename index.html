@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<title>MicroScope</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<div id="textWrap">
+			<h1 id="testTxt"></h1>
+		</div>
+		<canvas id="canvas" width="900" height="900" style="border:1px solid #000000;"></canvas>
+		<div style="display:none;">
+			<img id="testImg" src="test.jpg">
+		</div>
+		<div class="slidecontainer">
+			<input type="range" min="1" max="100" value="30" class="slider" id="lineWidthSlider">
+		</div>
+	</body>
+	<script src = "js/draw.js"></script>
+</html>
