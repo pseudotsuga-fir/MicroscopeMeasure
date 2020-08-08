@@ -7,7 +7,7 @@ let slider = document.getElementById("lineWidthSlider");
 let startPos = {x: 0, y: 0};
 let endPos = {x: 0, y: 0};
 let lineFOV = {x1: 0, y1: 0, x2: 0, y2: 0};
-let actualFOV = 18;
+let actualFOV = 45;
 let distFOV;
 let remapFOVRatio;
 let measurement;
@@ -70,7 +70,7 @@ window.onload = function() {
   drawBackground();
 }
 
-//TODO: add touch listeners
+//TODO: fix touch listeners
 c.addEventListener("mousedown", e => {
   startPos = {x: e.offsetX, y: e.offsetY};
   isDrawLine = true
@@ -86,6 +86,25 @@ c.addEventListener("mousemove", e => {
 });
 
 c.addEventListener("mouseup", e => {
+  isDrawLine = false;
+  checkSizeEnd = true;
+});
+
+c.addEventListener("touchstart", e => {
+  startPos = {x: e.offsetX, y: e.offsetY};
+  isDrawLine = true
+  if(distSet){
+    drawDist();
+  }
+});
+
+c.addEventListener("touchmove", e => {
+  if(!isDrawLine) return;
+  endPos = {x: e.offsetX, y: e.offsetY};
+  draws();
+});
+
+c.addEventListener("touchup", e => {
   isDrawLine = false;
   checkSizeEnd = true;
 });
