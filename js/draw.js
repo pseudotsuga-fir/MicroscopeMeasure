@@ -1,8 +1,15 @@
+/*
+Solution to responsive canvas size?
+https://stackoverflow.com/questions/18679414/how-put-percentage-width-into-html-canvas-no-css
+*/
+
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
-
 let testTxt = document.getElementById("testTxt");
 let slider = document.getElementById("lineWidthSlider");
+
+c.width = testImg.width * 0.2;
+c.height = testImg.height * 0.2;
 
 let startPos = {x: 0, y: 0};
 let endPos = {x: 0, y: 0};
@@ -12,7 +19,7 @@ let distFOV;
 let remapFOVRatio;
 let measurement;
 
-let lineFOVWidth = 3;
+let lineFOVWidth = 2;
 let lineColor = "#000000";
 
 let isDrawLine = false;
@@ -21,7 +28,7 @@ let distSet = false;
 
 slider.oninput = () => {
   draws();
-  lineFOVWidth = mapRange(slider.value, 1, 100, 1, 10);
+  lineFOVWidth = mapRange(slider.value, 1, 100, 0.4, 6);
 }
 
 const draws = () => {
@@ -39,6 +46,7 @@ const clearCanvas = () => {
 
 const drawLine = (width) => {
   ctx.strokeStyle = lineColor;
+  ctx.lineCap = "round";
   ctx.lineWidth = width;
   ctx.beginPath();
   ctx.moveTo(startPos.x, startPos.y);
@@ -46,11 +54,14 @@ const drawLine = (width) => {
   ctx.stroke();
 }
 
+const drawBackground = () => {
+  ctx.drawImage(document.getElementById("testImg"),0,0, testImg.width * 0.2, testImg.height * 0.2);
+}
+
 const drawDist = () => {
-  //measurement = mapRange(getDist(startPos.x,startPos.y,endPos.x,endPos.y).toFixed(2), 0, Math.sqrt((ctx.width)+(ctx.height)).toFixed(2), 0, distFOV).toFixed(2);
   measurement = (getDist(startPos.x,startPos.y,endPos.x,endPos.y).toFixed(2) * remapFOVRatio).toFixed(2);
-  ctx.font = "30px Arial"
-  ctx.fillText(measurement, 5, 100);
+  ctx.font = "15px Arial"
+  ctx.fillText(measurement, (startPos.x + endPos.x)/2 + 10, (startPos.y + endPos.y)/2 + 10);
 }
 
 const getDist = (x1, y1, x2, y2) => {
@@ -61,18 +72,15 @@ const mapRange = (value, low1, high1, low2, high2) => {
     return low2+(high2-low2)*(value-low1)/(high1-low1);
 }
 
-const drawBackground = () => {
-  ctx.drawImage(document.getElementById("testImg"),0,0, testImg.width * 0.2, testImg.height * 0.2);
-  ctx.width = testImg.width * 0.2;
-  ctx.height = testImg.height * 0.2;
-}
 window.onload = function() {
   drawBackground();
 }
 
 //TODO: fix touch listeners
 c.addEventListener("mousedown", e => {
-  startPos = {x: e.offsetX, y: e.offsetY};
+  //startPos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+  startPos = getMousePos(e);
+  console.log(startPos);
   isDrawLine = true
   if(distSet){
     drawDist();
@@ -81,7 +89,8 @@ c.addEventListener("mousedown", e => {
 
 c.addEventListener("mousemove", e => {
   if(!isDrawLine) return;
-  endPos = {x: e.offsetX, y: e.offsetY};
+  //endPos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+  endPos = getMousePos(e);
   draws();
 });
 
@@ -90,24 +99,33 @@ c.addEventListener("mouseup", e => {
   checkSizeEnd = true;
 });
 
-c.addEventListener("touchstart", e => {
-  startPos = {x: e.offsetX, y: e.offsetY};
-  isDrawLine = true
-  if(distSet){
-    drawDist();
-  }
-});
+const getMousePos = (e) => {
+    var rect = c.getBoundingClientRect();
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+}
 
-c.addEventListener("touchmove", e => {
-  if(!isDrawLine) return;
-  endPos = {x: e.offsetX, y: e.offsetY};
-  draws();
-});
-
-c.addEventListener("touchup", e => {
-  isDrawLine = false;
-  checkSizeEnd = true;
-});
+// c.addEventListener("touchstart", e => {
+//   console.log("touched! ")
+//   startPos = {x: e.offsetX, y: e.offsetY};
+//   isDrawLine = true
+//   if(distSet){
+//     drawDist();
+//   }
+// });
+//
+// c.addEventListener("touchmove", e => {
+//   if(!isDrawLine) return;
+//   endPos = {x: e.offsetX, y: e.offsetY};
+//   draws();
+// });
+//
+// c.addEventListener("touchup", e => {
+//   isDrawLine = false;
+//   checkSizeEnd = true;
+// });
 
 window.addEventListener("keyup", e => {
     if(e.code == "Enter" && checkSizeEnd == true){
