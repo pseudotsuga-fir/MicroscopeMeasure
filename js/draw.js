@@ -7,6 +7,10 @@ var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 let testTxt = document.getElementById("testTxt");
 let slider = document.getElementById("lineWidthSlider");
+let fieldIn = document.getElementById("fnumber");
+let lensIn = document.getElementById("lensMag");
+let objIn = document.getElementById("objMag");
+let submit = document.getElementById("FOVcalc");
 
 c.width = testImg.width * 0.2;
 c.height = testImg.height * 0.2;
@@ -29,6 +33,10 @@ let distSet = false;
 slider.oninput = () => {
   draws();
   lineFOVWidth = mapRange(slider.value, 1, 100, 0.4, 6);
+}
+
+submit.onclick = () => {
+  actualFOV = calcActualFOV(fieldIn.value, lensIn.value, objIn.value);
 }
 
 const draws = () => {
@@ -72,6 +80,10 @@ const mapRange = (value, low1, high1, low2, high2) => {
     return low2+(high2-low2)*(value-low1)/(high1-low1);
 }
 
+const calcActualFOV = (field, lens, objective) => {
+  //In micrometers
+  return (field/(lens*objective))*1000;
+}
 window.onload = function() {
   drawBackground();
 }

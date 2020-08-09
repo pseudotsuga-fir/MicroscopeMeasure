@@ -13,8 +13,17 @@
 			<img id="testImg" src="test.jpg">
 		</div>
 		<div class="slidecontainer">
-			<p>Line Width:</p>
-			<input type="range" min="1" max="100" value="20" class="slider" id="lineWidthSlider">
+			<div id= "widthName">Line Width:</div>
+			<input type="range" min="1" max="100" value="20" class="slider" id="lineWidthSlider" orient="vertical">
+		</div>
+		<div class textIOContainer>
+			<label for="fnumber">Field Number:</label>
+			<input type="number" id="fnumber" name="fnumber"><br><br>
+			<label for="lensMag">Lens Magnification:</label>
+			<input type="number" id="lensMag" name="lensMag"><br><br>
+			<label for="objMag">Objective Magnification:</label>
+			<input type="number" id="objMag" name="objMag"><br><br>
+			<input type="button" id="FOVcalc" value="Submit">
 		</div>
 	</body>
 	<script src = "js/draw.js"></script>
