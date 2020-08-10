@@ -49,3 +49,7 @@ canvas {
   width: 27px;
   border-radius: 50%;
 }
+.setDiam {
+  justify-content: center;
+  float right;
+}

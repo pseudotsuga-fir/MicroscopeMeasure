@@ -5,12 +5,12 @@ https://stackoverflow.com/questions/18679414/how-put-percentage-width-into-html-
 
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
-let testTxt = document.getElementById("testTxt");
 let slider = document.getElementById("lineWidthSlider");
 let fieldIn = document.getElementById("fnumber");
 let lensIn = document.getElementById("lensMag");
 let objIn = document.getElementById("objMag");
 let submit = document.getElementById("FOVcalc");
+let setDiam = document.getElementById("setDiam");
 
 c.width = testImg.width * 0.2;
 c.height = testImg.height * 0.2;
@@ -25,10 +25,12 @@ let measurement;
 
 let lineFOVWidth = 2;
 let lineColor = "#000000";
+let magColor = "#FFFFFF";
 
 let isDrawLine = false;
 let checkSizeEnd = false;
 let distSet = false;
+let magIsSet = false;
 
 slider.oninput = () => {
   draws();
@@ -37,6 +39,14 @@ slider.oninput = () => {
 
 submit.onclick = () => {
   actualFOV = calcActualFOV(fieldIn.value, lensIn.value, objIn.value);
+  magIsSet = true;
+  draws();
+}
+
+setDiam.onclick = (e) => {
+  if(checkSizeEnd){
+    setDistFov(e);
+  }
 }
 
 const draws = () => {
@@ -44,6 +54,9 @@ const draws = () => {
   drawBackground();
   if(distSet){
     drawDist();
+  }
+  if(magIsSet){
+    drawMag();
   }
   drawLine(lineFOVWidth);
 }
@@ -63,13 +76,21 @@ const drawLine = (width) => {
 }
 
 const drawBackground = () => {
-  ctx.drawImage(document.getElementById("testImg"),0,0, testImg.width * 0.2, testImg.height * 0.2);
+  ctx.drawImage(document.getElementById("testImg2"),0,0, testImg.width * 0.2, testImg.height * 0.2);
 }
 
 const drawDist = () => {
   measurement = (getDist(startPos.x,startPos.y,endPos.x,endPos.y).toFixed(2) * remapFOVRatio).toFixed(2);
+  ctx.fillStyle = lineColor;
   ctx.font = "15px Arial"
-  ctx.fillText(measurement, (startPos.x + endPos.x)/2 + 10, (startPos.y + endPos.y)/2 + 10);
+  ctx.fillText(measurement + '\u03BC' + "m", (startPos.x + endPos.x)/2 + 10, (startPos.y + endPos.y)/2 + 20);
+}
+
+const drawMag = () => {
+  ctx.font = "15px Arial"
+  ctx.fillStyle = magColor;
+  ctx.fillText("FOV: "+ actualFOV + '\u03BC' + "m", 10, 20);
+  ctx.fillText(lensIn.value*objIn.value+"x" ,10, 40);
 }
 
 const getDist = (x1, y1, x2, y2) => {
@@ -90,7 +111,6 @@ window.onload = function() {
 
 //TODO: fix touch listeners
 c.addEventListener("mousedown", e => {
-  //startPos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
   startPos = getMousePos(e);
   console.log(startPos);
   isDrawLine = true
@@ -101,7 +121,6 @@ c.addEventListener("mousedown", e => {
 
 c.addEventListener("mousemove", e => {
   if(!isDrawLine) return;
-  //endPos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
   endPos = getMousePos(e);
   draws();
 });
@@ -152,7 +171,6 @@ const setDistFov = (e) => {
     remapFOVRatio = actualFOV/distFOV;
     distSet = true;
     checkSizeEnd = false;
-    testTxt.innerHTML = "Microscope FOV set";
 }
 // function callOnce(fn, context) {
 // 	var result;
